@@ -22,9 +22,9 @@ void            printRecord(struct record record);
 unsigned int    getIntLength(char *str);
 unsigned int    getFloatLength(char *str);
 unsigned int    getStringLength(char *str);
-void            sortByTypeLength(struct record *records, unsigned short size);
-void            sortByIntegerLength(struct record *records, unsigned short size);
-void            sortByFloatingLength(struct record *records, unsigned short size);
+void            sortByTypeLength(RecordType *records, unsigned short size);
+void            sortByIntegerLength(RecordType *records, unsigned short size);
+void            sortByFloatingLength(RecordType *records, unsigned short size);
 
 unsigned char choice = 0;
 
@@ -40,8 +40,8 @@ int main()
     if (in_file == NULL)
     {
         printf("Error! Could"
-               ""
-               " not open file\n");
+                ""
+                " not open file\n");
         exit(-1); // must include stdlib.h
     }
     else{
@@ -61,7 +61,7 @@ int main()
 
         unsigned short i = 0;
         const unsigned short SIZE = index; //129 original size
-        struct record records[SIZE];
+        RecordType *records = (struct record *)(malloc((SIZE)*sizeof (struct record)));
         for(i = 0; i < SIZE; i++){
             if (strstr(data[i], "|") != NULL) {
                 // contains
@@ -201,7 +201,7 @@ void menu(void) {
  * @param  {struct*} record : 
  * @param  {unsigned} short : 
  */
-void sortByTypeLength(struct record *records, unsigned short size){
+void sortByTypeLength(RecordType *records, unsigned short size){
     unsigned short i, j;
     for(i = 0; i < size - 1; i++){
         for(j = 0; j < size - i - 1; j++){
@@ -220,7 +220,7 @@ void sortByTypeLength(struct record *records, unsigned short size){
  * @param  {struct*} record : 
  * @param  {unsigned} short : 
  */
-void sortByIntegerLength(struct record *records, unsigned short size){
+void sortByIntegerLength(RecordType *records, unsigned short size){
     unsigned short i, j;
     for(i = 0; i < size - 1; i++){
         for(j = 0; j < size - i - 1; j++){
@@ -239,7 +239,7 @@ void sortByIntegerLength(struct record *records, unsigned short size){
  * @param  {struct*} record : 
  * @param  {unsigned} short : 
  */
-void sortByFloatingLength(struct record *records, unsigned short size){
+void sortByFloatingLength(RecordType *records, unsigned short size){
     unsigned short i, j;
     for(i = 0; i < size - 1; i++){
         for(j = 0; j < size - i - 1; j++){
