@@ -1,7 +1,11 @@
+//////////////////////////////////// Includes section /////////////////////////////////////////////
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+//////////////////////////////////// Types definitions ////////////////////////////////////////////
 typedef enum {NUMERIC = 1, DECIMAL, ALPHA_NUMERIC} DataType;
 typedef struct record
 {
@@ -10,7 +14,10 @@ typedef struct record
     unsigned short integer_length = 0;
     unsigned short decimal_length = 0;
 } RecordType;
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+//////////////////////////////////// Function prototypes //////////////////////////////////////////
 void            menu(void);
 void            choice1(RecordType *, unsigned short);
 void            choice2(RecordType *, unsigned short);
@@ -22,20 +29,27 @@ void            printRecord(struct record record);
 unsigned int    getIntLength(char *str);
 unsigned int    getFloatLength(char *str);
 unsigned int    getStringLength(char *str);
-void            sortByTypeLength(RecordType *records, unsigned short size);
+void            sortByType(RecordType *records, unsigned short size);
 void            sortByIntegerLength(RecordType *records, unsigned short size);
 void            sortByFloatingLength(RecordType *records, unsigned short size);
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+//////////////////////////////////// Global variables //////////////////////////////////////////////
 unsigned char choice = 0;
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 /**
- * 
- * 
+ * @brief brief description 
+ * Main function loads file in the root directory of the Project,
+ * parses its content and saves the data in array of records, then
+ * waits for the user input selection
  * @return {int}  : Returns 0
  */
 int main()
 {
-    FILE *in_file  = fopen("other_file.txt", "r");
+    FILE *in_file  = fopen("data.txt", "r");
     // test for files not existing.
     if (in_file == NULL)
     {
@@ -52,10 +66,12 @@ int main()
         data = (char**)malloc(sizeof(char*) * 100);
         while(fscanf(in_file,"%s", s) != EOF)
         {
-            data[index] = (char *)(malloc((strlen(s) + 1)*sizeof (char*)));
-            strcpy(data[index], s);
-            index++;
-            data = (char**)(realloc(data, (index+1)*sizeof(*data)));
+//            if(s){
+                data[index] = (char *)(malloc((strlen(s) + 1)*sizeof (char*)));
+                strcpy(data[index], s);
+                index++;
+                data = (char**)(realloc(data, (index+1)*sizeof(*data)));
+//            }
         }
         fclose(in_file);
 
@@ -63,8 +79,7 @@ int main()
         const unsigned short SIZE = index; //129 original size
         RecordType *records = (struct record *)(malloc((SIZE)*sizeof (struct record)));
         for(i = 0; i < SIZE; i++){
-            if (strstr(data[i], "|") != NULL) {
-                // contains
+            if (strstr(data[i], "|") != NULL) { //Checks if the string contains the split pattern
                 char * str = (char *)(malloc(strlen(data[i]) + 1));
                 strcpy(str, data[i]);
                 char delim[] = "|";
@@ -134,10 +149,13 @@ int main()
     return 0;
 }
     
+
+//////////////////////////////////// Function implementations //////////////////////////////////////
 /**
- * 
- * @param  {RecordType*} records : 
- * @param  {unsigned} short      : 
+ * @brief brief description 
+ * Received records and prints the array
+ * @param  {RecordType*} records : Pointer to the records to print
+ * @param  {unsigned} short      : The size of the array of records
  */
 void choice1(RecordType * records, unsigned short size){
     unsigned short i = 0;
@@ -146,21 +164,23 @@ void choice1(RecordType * records, unsigned short size){
     }
 }
 /**
- * 
- * @param  {RecordType*} records : 
- * @param  {unsigned} short      : 
+ * @brief brief description
+ * Received records, they are ordered by type and then prints them
+ * @param  {RecordType*} records : Pointer to the records to print
+ * @param  {unsigned} short      : The size of the array of records
  */
 void choice2(RecordType * records, unsigned short size){
-    sortByTypeLength(records, size);
+    sortByType(records, size);
     unsigned short i = 0;
     for(i = 0; i < size; i++){
         printRecord(records[i]);
     }
 }
 /**
- * 
- * @param  {RecordType*} records : 
- * @param  {unsigned} short      : 
+ * @brief brief description
+ * Received records, they are ordered by its integer's length and then prints them
+ * @param  {RecordType*} records : Pointer to the records to print
+ * @param  {unsigned} short      : The size of the array of records
  */
 void choice3(RecordType * records, unsigned short size){
     sortByIntegerLength(records, size);
@@ -170,9 +190,10 @@ void choice3(RecordType * records, unsigned short size){
     }
 }
 /**
- * 
- * @param  {RecordType*} records : 
- * @param  {unsigned} short      : 
+ * @brief brief description
+ * Received records, they are ordered by its decimal's length and then prints them
+ * @param  {RecordType*} records : Pointer to the records to print
+ * @param  {unsigned} short      : The size of the array of records
  */
 void choice4(RecordType * records, unsigned short size){
     sortByFloatingLength(records, size);
@@ -182,8 +203,9 @@ void choice4(RecordType * records, unsigned short size){
     }
 }
 /**
- * 
- * @param  {void} undefined : 
+ * @brief brief description
+ * Shows a menu and waits for the selection of the user
+ * @param  {void} undefined : Receives nothing
  */
 void menu(void) {
     if(choice != '\n'){
@@ -197,11 +219,12 @@ void menu(void) {
     scanf("%c", &choice);
 }
 /**
- * 
- * @param  {struct*} record : 
- * @param  {unsigned} short : 
+ * @brief brief description
+ * This function sorts the array of records by type of data
+ * @param  {unsigned} short : The size of the array of records
+ * @param  {struct*} record : Pointer to records to sort
  */
-void sortByTypeLength(RecordType *records, unsigned short size){
+void sortByType(RecordType *records, unsigned short size){
     unsigned short i, j;
     for(i = 0; i < size - 1; i++){
         for(j = 0; j < size - i - 1; j++){
@@ -216,9 +239,10 @@ void sortByTypeLength(RecordType *records, unsigned short size){
     }
 }
 /**
- * 
- * @param  {struct*} record : 
- * @param  {unsigned} short : 
+ * @brief brief description
+ * This function sorts the array of records by its integer's length
+ * @param  {struct*} record : The size of the array of records
+ * @param  {unsigned} short : Pointer to records to sort
  */
 void sortByIntegerLength(RecordType *records, unsigned short size){
     unsigned short i, j;
@@ -235,9 +259,10 @@ void sortByIntegerLength(RecordType *records, unsigned short size){
     }
 }
 /**
- * 
- * @param  {struct*} record : 
- * @param  {unsigned} short : 
+ * @brief brief description
+ * This function sorts the array of records by its decimal's length
+ * @param  {struct*} record : The size of the array of records
+ * @param  {unsigned} short : Pointer to records to sort
  */
 void sortByFloatingLength(RecordType *records, unsigned short size){
     unsigned short i, j;
@@ -254,9 +279,10 @@ void sortByFloatingLength(RecordType *records, unsigned short size){
     }
 }
 /**
- * 
- * @param  {char*} str_original : 
- * @return {unsigned}           : 
+ * @brief brief description
+ * This function received string and gets the amount of the integers
+ * @param  {char*} str_original : Pointer to the string
+ * @return {unsigned}           : Returns the amount of the integers
  */
 unsigned int getIntLength(char *str_original){
     unsigned int size = 0;
@@ -287,9 +313,10 @@ unsigned int getIntLength(char *str_original){
     return size;
 }
 /**
- * 
- * @param  {char*} str_original : 
- * @return {unsigned}           : 
+ * @brief brief description
+ * This function received string and gets the amount of the decimals
+ * @param  {char*} str_original : Pointer to the string
+ * @return {unsigned}           : Returns the amount of the integers
  */
 unsigned int getFloatLength(char *str_original){
     unsigned int size = 0;
@@ -320,9 +347,10 @@ unsigned int getFloatLength(char *str_original){
     return size;
 }
 /**
- * 
- * @param  {char*} str_original : 
- * @return {unsigned}           : 
+ * @brief brief description
+ * This function received string and gets the amount of the alphanumeric characters
+ * @param  {char*} str_original : Pointer to the string
+ * @return {unsigned}           : Returns the amount of the integers
  */
 unsigned int getStringLength(char *str_original){
     unsigned int size = 0;
@@ -353,10 +381,11 @@ unsigned int getStringLength(char *str_original){
     return size;
 }
 /**
- * 
- * @param  {struct} record : 
+ * @brief brief description
+ * This function receives a record type and prints it
+ * @param  {struct} record : Record type to print
  */
-void printRecord(struct record record){
+void printRecord(RecordType record){
     printf("\nRecord\n");
     printf("id             : %d\n", record.id);
     printf("data_type      : %s\n", (record.data_type==NUMERIC)?
@@ -367,12 +396,13 @@ void printRecord(struct record record){
     printf("decimal_length : %d\n\n", record.decimal_length);
 }
 /**
- * char*str_replace 
- * 
- * @param  {char*} orig    : 
- * @param  {char*} rep     : 
- * @param  {char*} with    : 
- * @param  {unsigned*} int : 
+ * @brief brief description
+ * This function replaces a pattern on the original string with a replacement string
+ * and count the amount of matches in the original string
+ * @param  {char*} orig    : Pointer to the original string
+ * @param  {char*} rep     : Pointer to the string to replace
+ * @param  {char*} with    : Pointer to the replacement string
+ * @param  {unsigned*} int : Pointer to the amount of matches
  */
 char *str_replace(char *orig, char *rep, char *with, unsigned int *count_matches) {
     char *result; // the return string
@@ -416,10 +446,11 @@ char *str_replace(char *orig, char *rep, char *with, unsigned int *count_matches
     return result;
 }
 /**
- * 
- * @param  {char*} str       : 
- * @param  {char*} delim     : 
- * @param  {char* []} result : 
+ * @brief brief description
+ * This function splits the string in two parts
+ * @param  {char*} str       : Pointer to the string to split
+ * @param  {char*} delim     : Pointer to the string splitter pattern
+ * @param  {char* []} result : Pointer to the string array splitted parts 
  */
 void str_split(char *str, char *delim, char* result[]){
     //        int init_size = strlen(str);
@@ -436,6 +467,7 @@ void str_split(char *str, char *delim, char* result[]){
         i++;
     }
 }
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
