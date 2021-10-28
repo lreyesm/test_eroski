@@ -1,115 +1,95 @@
-#include <QCoreApplication>
-#include <QDebug>
-//    QStringList list;
-//    list << "field1|9" << "field2|9(005)" << "field3|9(006)" << "field4|9(008)" << "field5|9(01)" << "field6|9(02)" << "field7|9(02)V9(02)" << "field8|9(03)" << "field9|9(03)V99" << "field10|9(04)" << "field11|9(04)V99" << "field12|9(05)" << "field13|9(06)" << "field14|9(07)" << "field15|9(08)" << "field16|9(08)V999" << "field17|9(09)" << "field18|9(1)" << "field19|9(10)" << "field20|9(12)" << "field21|9(2)" << "field22|9(3)" << "field23|9(3)V9(2)" << "field24|9(3)V9(4)" << "field25|9(4)" << "field26|9(4)V9(2)" << "field27|9(4)V99" << "field28|9(5)" << "field29|9(5)V9(3)" << "field30|9(6)" << "field31|9(7)V999" << "field32|9(8)" << "field33|99" << "field34|9999" << "field35|99V99" << "field36|99V9999" << "field37|99V999999" << "field38|S999V99" << "field39|X" << "field40|X(01)" << "field41|X(02)" << "field42|X(026)" << "field43|X(029)" << "field44|X(03)" << "field45|X(04)" << "field46|X(05)" << "field47|X(06)" << "field48|X(066)" << "field49|X(07)" << "field50|X(08)" << "field51|X(09)" << "field52|X(092)" << "field53|X(1)" << "field54|X(10)" << "field55|X(102)" << "field56|X(103)" << "field57|X(106)" << "field58|X(107)" << "field59|X(11)" << "field60|X(111)" << "field61|X(113)" << "field62|X(116)" << "field63|X(12)" << "field64|X(120)" << "field65|X(123)" << "field66|X(124)" << "field67|X(13)" << "field68|X(14)" << "field69|X(15)" << "field70|X(16)" << "field71|X(17)" << "field72|X(18)" << "field73|X(19)" << "field74|X(2)" << "field75|X(20)" << "field76|X(21)" << "field77|X(23)" << "field78|X(24)" << "field79|X(25)" << "field80|X(26)" << "field81|X(27)" << "field82|X(28)" << "field83|X(29)" << "field84|X(3)" << "field85|X(30)" << "field86|X(32)" << "field87|X(33)" << "field88|X(34)" << "field89|X(35)" << "field90|X(36)" << "field91|X(37)" << "field92|X(38)" << "field93|X(39)" << "field94|X(4)" << "field95|X(40)" << "field96|X(42)" << "field97|X(43)" << "field98|X(44)" << "field99|X(45)" << "field100|X(46)" << "field101|X(48)" << "field102|X(49)" << "field103|X(50)" << "field104|X(51)" << "field105|X(53)" << "field106|X(54)" << "field107|X(56)" << "field108|X(6)" << "field109|X(60)" << "field110|X(63)" << "field111|X(64)" << "field112|X(68)" << "field113|X(69)" << "field114|X(71)" << "field115|X(72)" << "field116|X(74)" << "field117|X(75)" << "field118|X(77)" << "field119|X(78)" << "field120|X(8)" << "field121|X(80)" << "field122|X(86)" << "field123|X(87)" << "field124|X(89)" << "field125|X(92)" << "field126|X(96)" << "field127|X(97)" << "field128|X(99)" << "field129|XXXX";
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-
 typedef enum {NUMERIC = 1, DECIMAL, ALPHA_NUMERIC} DataType;
-char         *str_replace(char *orig, char *rep, char *with, unsigned int *count_matches);
-void         str_split(char *str, char *delim, char* result[]);
-void         printRecord(struct record record);
-unsigned int getIntLength(char *str);
-unsigned int getFloatLength(char *str);
-unsigned int getStringLength(char *str);
-void         sortByTypeLength(struct record *records, unsigned short size);
-void         sortByIntegerLength(struct record *records, unsigned short size);
-void         sortByFloatingLength(struct record *records, unsigned short size);
-
-struct record
+typedef struct record
 {
     unsigned short id = 0;
     DataType data_type = NUMERIC;
     unsigned short integer_length = 0;
     unsigned short decimal_length = 0;
-};
+} RecordType;
 
-int main(int argc, char *argv[])
-{  QCoreApplication a(argc, argv);
+void            menu(void);
+void            choice1(RecordType *, unsigned short);
+void            choice2(RecordType *, unsigned short);
+void            choice3(RecordType *, unsigned short);
+void            choice4(RecordType *, unsigned short);
+char            *str_replace(char *orig, char *rep, char *with, unsigned int *count_matches);
+void            str_split(char *str, char *delim, char* result[]);
+void            printRecord(struct record record);
+unsigned int    getIntLength(char *str);
+unsigned int    getFloatLength(char *str);
+unsigned int    getStringLength(char *str);
+void            sortByTypeLength(struct record *records, unsigned short size);
+void            sortByIntegerLength(struct record *records, unsigned short size);
+void            sortByFloatingLength(struct record *records, unsigned short size);
 
+unsigned char choice = 0;
+
+/**
+ * 
+ * 
+ * @return {int}  : Returns 0
+ */
+int main()
+{
     FILE *in_file  = fopen("other_file.txt", "r");
     // test for files not existing.
     if (in_file == NULL)
     {
-        printf("Error! Could not open file\n");
+        printf("Error! Could"
+               ""
+               " not open file\n");
         exit(-1); // must include stdlib.h
     }
     else{
         //File opened successfully
         unsigned int index = 0;
         char *s;
-
         char **data = NULL;
         data = (char**)malloc(sizeof(char*) * 100);
-
         while(fscanf(in_file,"%s", s) != EOF)
         {
-            //            printf("file read:  %s\n", s);
             data[index] = (char *)(malloc((strlen(s) + 1)*sizeof (char*)));
             strcpy(data[index], s);
             index++;
             data = (char**)(realloc(data, (index+1)*sizeof(*data)));
         }
-
         fclose(in_file);
 
         unsigned short i = 0;
-        //        for(i = 0; i < index; i++){
-        //            printf("file read:  %s\n", data[i]);
-        //        }
-
-        //str = strdup (buf); //copy string
         const unsigned short SIZE = index; //129 original size
         struct record records[SIZE];
-
         for(i = 0; i < SIZE; i++){
-
             if (strstr(data[i], "|") != NULL) {
                 // contains
-
                 char * str = (char *)(malloc(strlen(data[i]) + 1));
-                //        free(str); // at the end, free it again.
                 strcpy(str, data[i]);
                 char delim[] = "|";
-
                 char *split_data[2];
                 unsigned int matches = 0;
                 str_split(str, delim, split_data);
-
-
                 char *s_id = split_data[0];
                 char *s_data = split_data[1];
-
-                //                printf("s_id   : %s\n", s_id);
-                //                printf("s_data : %s\n", s_data);
-
                 if (strstr(s_id, "field") != NULL) {
                     s_id = str_replace(split_data[0], "field", "", &matches);
                 }
                 int num = (int) strtol(s_id, (char **)NULL, 10);  //Convert to int
-                //                printf("record id:  %d\n", num);
-
                 records[i].id = num;
-
                 if(strstr(s_data, "X") != NULL){ //String type
                     records[i].data_type = ALPHA_NUMERIC;
                     unsigned int size = getStringLength(s_data);
                 }
                 else if(strstr(s_data, "V") != NULL){ //String type
                     records[i].data_type = DECIMAL;
-
                     unsigned int size = getIntLength(s_data);
                     records[i].integer_length = size;
-
                     unsigned int matches = 0;
                     s_data = str_replace(s_data, "9", "", &matches);
-
                     size = getFloatLength(s_data);
                     records[i].decimal_length = size;
-
                 }
                 else if(strstr(s_data, "9") != NULL){
                     records[i].data_type = NUMERIC;
@@ -119,17 +99,108 @@ int main(int argc, char *argv[])
                 free(str);
             }
         }
-        //        sortByIntegerLength(records, SIZE);
-        //        sortByFloatingLength(records, SIZE);
-        sortByTypeLength(records, SIZE);
-        for(i = 0; i < SIZE; i++){
-            printRecord(records[i]);
-        }
         free(data);
-    }
-    return a.exec();
-}
 
+        while (choice != '5'){
+            menu();
+            if (choice =='0')
+                continue;
+            else if (choice =='1'){
+                choice = 0;
+                choice1(records, SIZE);
+            }
+            else if (choice =='2'){
+                choice = 0;
+                choice2(records, SIZE);
+            }
+            else if (choice =='3'){
+                choice = 0;
+                choice3(records, SIZE);
+            }
+            else if (choice =='4'){
+                choice = 0;
+                choice4(records, SIZE);
+            }
+            else if (choice =='5')
+                break;
+            else{
+                if(choice != '\n'){
+                    printf("Invalid character.\n\n", choice);
+                }
+            }
+        };
+    }
+    exit(-1);
+    return 0;
+}
+    
+/**
+ * 
+ * @param  {RecordType*} records : 
+ * @param  {unsigned} short      : 
+ */
+void choice1(RecordType * records, unsigned short size){
+    unsigned short i = 0;
+    for(i = 0; i < size; i++){
+        printRecord(records[i]);
+    }
+}
+/**
+ * 
+ * @param  {RecordType*} records : 
+ * @param  {unsigned} short      : 
+ */
+void choice2(RecordType * records, unsigned short size){
+    sortByTypeLength(records, size);
+    unsigned short i = 0;
+    for(i = 0; i < size; i++){
+        printRecord(records[i]);
+    }
+}
+/**
+ * 
+ * @param  {RecordType*} records : 
+ * @param  {unsigned} short      : 
+ */
+void choice3(RecordType * records, unsigned short size){
+    sortByIntegerLength(records, size);
+    unsigned short i = 0;
+    for(i = 0; i < size; i++){
+        printRecord(records[i]);
+    }
+}
+/**
+ * 
+ * @param  {RecordType*} records : 
+ * @param  {unsigned} short      : 
+ */
+void choice4(RecordType * records, unsigned short size){
+    sortByFloatingLength(records, size);
+    unsigned short i = 0;
+    for(i = 0; i < size; i++){
+        printRecord(records[i]);
+    }
+}
+/**
+ * 
+ * @param  {void} undefined : 
+ */
+void menu(void) {
+    if(choice != '\n'){
+        printf("\nMenu:\n\n");
+        printf("1) Print the content of the file.\n");
+        printf("2) Print ordered by (NUMERIC, DECIMAL, ALPHANUMERIC).\n");
+        printf("3) Print ordered by integer size.\n");
+        printf("4) Print ordered by decimal size.\n");
+        printf("Choose any of the above, or enter 5 to quit.\n\n");
+    }
+    scanf("%c", &choice);
+}
+/**
+ * 
+ * @param  {struct*} record : 
+ * @param  {unsigned} short : 
+ */
 void sortByTypeLength(struct record *records, unsigned short size){
     unsigned short i, j;
     for(i = 0; i < size - 1; i++){
@@ -144,7 +215,11 @@ void sortByTypeLength(struct record *records, unsigned short size){
         }
     }
 }
-
+/**
+ * 
+ * @param  {struct*} record : 
+ * @param  {unsigned} short : 
+ */
 void sortByIntegerLength(struct record *records, unsigned short size){
     unsigned short i, j;
     for(i = 0; i < size - 1; i++){
@@ -159,7 +234,11 @@ void sortByIntegerLength(struct record *records, unsigned short size){
         }
     }
 }
-
+/**
+ * 
+ * @param  {struct*} record : 
+ * @param  {unsigned} short : 
+ */
 void sortByFloatingLength(struct record *records, unsigned short size){
     unsigned short i, j;
     for(i = 0; i < size - 1; i++){
@@ -174,7 +253,11 @@ void sortByFloatingLength(struct record *records, unsigned short size){
         }
     }
 }
-
+/**
+ * 
+ * @param  {char*} str_original : 
+ * @return {unsigned}           : 
+ */
 unsigned int getIntLength(char *str_original){
     unsigned int size = 0;
     char * str = (char *)(malloc(strlen(str_original) + 1));
@@ -203,6 +286,11 @@ unsigned int getIntLength(char *str_original){
     free(str);
     return size;
 }
+/**
+ * 
+ * @param  {char*} str_original : 
+ * @return {unsigned}           : 
+ */
 unsigned int getFloatLength(char *str_original){
     unsigned int size = 0;
     char * str = (char *)(malloc(strlen(str_original) + 1));
@@ -231,6 +319,11 @@ unsigned int getFloatLength(char *str_original){
     free(str);
     return size;
 }
+/**
+ * 
+ * @param  {char*} str_original : 
+ * @return {unsigned}           : 
+ */
 unsigned int getStringLength(char *str_original){
     unsigned int size = 0;
     char * str = (char *)(malloc(strlen(str_original) + 1));
@@ -259,18 +352,28 @@ unsigned int getStringLength(char *str_original){
     free(str);
     return size;
 }
-
+/**
+ * 
+ * @param  {struct} record : 
+ */
 void printRecord(struct record record){
     printf("\nRecord\n");
     printf("id             : %d\n", record.id);
     printf("data_type      : %s\n", (record.data_type==NUMERIC)?
-               "NUMERIC":(record.data_type==DECIMAL)?
-                   "DECIMAL":(record.data_type==ALPHA_NUMERIC)?
-                       "ALPHA_NUMERIC": "unknow");
+                "NUMERIC":(record.data_type==DECIMAL)?
+                    "DECIMAL":(record.data_type==ALPHA_NUMERIC)?
+                        "ALPHA_NUMERIC": "unknow");
     printf("integer_length : %d\n", record.integer_length);
     printf("decimal_length : %d\n\n", record.decimal_length);
 }
-
+/**
+ * char*str_replace 
+ * 
+ * @param  {char*} orig    : 
+ * @param  {char*} rep     : 
+ * @param  {char*} with    : 
+ * @param  {unsigned*} int : 
+ */
 char *str_replace(char *orig, char *rep, char *with, unsigned int *count_matches) {
     char *result; // the return string
     char *ins;    // the next insert point
@@ -279,7 +382,6 @@ char *str_replace(char *orig, char *rep, char *with, unsigned int *count_matches
     int len_with; // length of with (the string to replace rep with)
     int len_front; // distance between rep and end of last rep
     int count;    // number of replacements
-
     // sanity checks and initialization
     if (!orig || !rep)
         return NULL;
@@ -289,19 +391,15 @@ char *str_replace(char *orig, char *rep, char *with, unsigned int *count_matches
     if (!with)
         with = "";
     len_with = strlen(with);
-
     // count the number of replacements needed
     ins = orig;
     for (count = 0; tmp = strstr(ins, rep); ++count) {
         ins = tmp + len_rep;
     }
     *count_matches = count;
-
     tmp = result = (char *)(malloc(strlen(orig) + (len_with - len_rep) * count + 1));
-
     if (!result)
         return NULL;
-
     // first time through the loop, all the variable are set correctly
     // from here on,
     //    tmp points to the end of the result string
@@ -317,7 +415,12 @@ char *str_replace(char *orig, char *rep, char *with, unsigned int *count_matches
     strcpy(tmp, orig);
     return result;
 }
-
+/**
+ * 
+ * @param  {char*} str       : 
+ * @param  {char*} delim     : 
+ * @param  {char* []} result : 
+ */
 void str_split(char *str, char *delim, char* result[]){
     //        int init_size = strlen(str);
     unsigned int i = 0;
@@ -332,12 +435,6 @@ void str_split(char *str, char *delim, char* result[]){
         }
         i++;
     }
-    /* This loop will show that there are zeroes in the str after tokenizing */
-    //        for (int i = 0; i < init_size; i++)
-    //        {
-    //            printf("%d ", str[i]); /* Convert the character to integer, in this case
-    //                                   the character's ASCII equivalent */
-    //        }
 }
 
 
