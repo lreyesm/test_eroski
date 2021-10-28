@@ -9,10 +9,10 @@
 typedef enum {NUMERIC = 1, DECIMAL, ALPHA_NUMERIC} DataType;
 typedef struct record
 {
-    unsigned short id = 0;
-    DataType data_type = NUMERIC;
-    unsigned short integer_length = 0;
-    unsigned short decimal_length = 0;
+    unsigned short id;
+    DataType data_type;
+    unsigned short integer_length;
+    unsigned short decimal_length;
 } RecordType;
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -41,7 +41,7 @@ unsigned char choice = 0;
 
 
 /**
- * @brief brief description 
+ * @brief brief description
  * Main function loads file in the root directory of the Project,
  * parses its content and saves the data in array of records, then
  * waits for the user input selection
@@ -49,6 +49,7 @@ unsigned char choice = 0;
  */
 int main()
 {
+    printf("----------------------  Eroski test exercise  ---------------------\n");
     FILE *in_file  = fopen("data.txt", "r");
     // test for files not existing.
     if (in_file == NULL)
@@ -66,12 +67,12 @@ int main()
         data = (char**)malloc(sizeof(char*) * 100);
         while(fscanf(in_file,"%s", s) != EOF)
         {
-//            if(s){
+            if(s){
                 data[index] = (char *)(malloc((strlen(s) + 1)*sizeof (char*)));
                 strcpy(data[index], s);
                 index++;
                 data = (char**)(realloc(data, (index+1)*sizeof(*data)));
-//            }
+            }
         }
         fclose(in_file);
 
@@ -79,6 +80,10 @@ int main()
         const unsigned short SIZE = index; //129 original size
         RecordType *records = (struct record *)(malloc((SIZE)*sizeof (struct record)));
         for(i = 0; i < SIZE; i++){
+            records[i].id = 0;              //Default value
+            records[i].data_type = NUMERIC; //Default value
+            records[i].integer_length = 0;  //Default value
+            records[i].decimal_length = 0;  //Default value
             if (strstr(data[i], "|") != NULL) { //Checks if the string contains the split pattern
                 char * str = (char *)(malloc(strlen(data[i]) + 1));
                 strcpy(str, data[i]);
@@ -88,16 +93,16 @@ int main()
                 str_split(str, delim, split_data);
                 char *s_id = split_data[0];
                 char *s_data = split_data[1];
-                if (strstr(s_id, "field") != NULL) {
+                if (strstr(s_id, "field") != NULL) { //Checks if contains the "field" string and replaces it
                     s_id = str_replace(split_data[0], "field", "", &matches);
                 }
                 int num = (int) strtol(s_id, (char **)NULL, 10);  //Convert to int
                 records[i].id = num;
-                if(strstr(s_data, "X") != NULL){ //String type
+                if(strstr(s_data, "X") != NULL){ // String type
                     records[i].data_type = ALPHA_NUMERIC;
                     unsigned int size = getStringLength(s_data);
                 }
-                else if(strstr(s_data, "V") != NULL){ //String type
+                else if(strstr(s_data, "V") != NULL){ // Decimal type
                     records[i].data_type = DECIMAL;
                     unsigned int size = getIntLength(s_data);
                     records[i].integer_length = size;
@@ -106,7 +111,7 @@ int main()
                     size = getFloatLength(s_data);
                     records[i].decimal_length = size;
                 }
-                else if(strstr(s_data, "9") != NULL){
+                else if(strstr(s_data, "9") != NULL){ // Integer type
                     records[i].data_type = NUMERIC;
                     unsigned int size = getIntLength(s_data);
                     records[i].integer_length = size;
@@ -148,11 +153,11 @@ int main()
     exit(-1);
     return 0;
 }
-    
+
 
 //////////////////////////////////// Function implementations //////////////////////////////////////
 /**
- * @brief brief description 
+ * @brief brief description
  * Received records and prints the array
  * @param  {RecordType*} records : Pointer to the records to print
  * @param  {unsigned} short      : The size of the array of records
@@ -450,7 +455,7 @@ char *str_replace(char *orig, char *rep, char *with, unsigned int *count_matches
  * This function splits the string in two parts
  * @param  {char*} str       : Pointer to the string to split
  * @param  {char*} delim     : Pointer to the string splitter pattern
- * @param  {char* []} result : Pointer to the string array splitted parts 
+ * @param  {char* []} result : Pointer to the string array splitted parts
  */
 void str_split(char *str, char *delim, char* result[]){
     //        int init_size = strlen(str);
