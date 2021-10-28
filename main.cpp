@@ -9,12 +9,15 @@
 
 
 typedef enum {NUMERIC = 1, DECIMAL, ALPHA_NUMERIC} DataType;
-char *str_replace(char *orig, char *rep, char *with, unsigned int *count_matches);
-void str_split(char *str, char *delim, char* result[]);
-void printRecord(struct record record);
+char         *str_replace(char *orig, char *rep, char *with, unsigned int *count_matches);
+void         str_split(char *str, char *delim, char* result[]);
+void         printRecord(struct record record);
 unsigned int getIntLength(char *str);
 unsigned int getFloatLength(char *str);
 unsigned int getStringLength(char *str);
+void         sortByTypeLength(struct record *records, unsigned short size);
+void         sortByIntegerLength(struct record *records, unsigned short size);
+void         sortByFloatingLength(struct record *records, unsigned short size);
 
 struct record
 {
@@ -50,15 +53,17 @@ int main(int argc, char *argv[])
             index++;
             data = (char**)(realloc(data, (index+1)*sizeof(*data)));
         }
-        for(index = 0; index < 10; index++){
-            qDebug()<<data[index];
-        }
+
+        fclose(in_file);
+
+        unsigned short i = 0;
+        //        for(i = 0; i < index; i++){
+        //            printf("file read:  %s\n", data[i]);
+        //        }
 
         //str = strdup (buf); //copy string
         const unsigned short SIZE = index; //129 original size
         struct record records[SIZE];
-
-        unsigned short i;
 
         for(i = 0; i < SIZE; i++){
 
@@ -78,14 +83,14 @@ int main(int argc, char *argv[])
                 char *s_id = split_data[0];
                 char *s_data = split_data[1];
 
-                qDebug() << "s_id   : "<< s_id;
-                qDebug() << "s_data : "<< s_data;
+                //                printf("s_id   : %s\n", s_id);
+                //                printf("s_data : %s\n", s_data);
 
                 if (strstr(s_id, "field") != NULL) {
                     s_id = str_replace(split_data[0], "field", "", &matches);
                 }
                 int num = (int) strtol(s_id, (char **)NULL, 10);  //Convert to int
-                printf("record id:  %d\n", num);
+                //                printf("record id:  %d\n", num);
 
                 records[i].id = num;
 
@@ -111,32 +116,63 @@ int main(int argc, char *argv[])
                     unsigned int size = getIntLength(s_data);
                     records[i].integer_length = size;
                 }
-                printRecord(records[i]);
-
                 free(str);
             }
         }
-
+        //        sortByIntegerLength(records, SIZE);
+        //        sortByFloatingLength(records, SIZE);
+        sortByTypeLength(records, SIZE);
+        for(i = 0; i < SIZE; i++){
+            printRecord(records[i]);
+        }
         free(data);
-        fclose(in_file);
     }
-
-
-
-
-    //        records[i].id =
-
-    //        char ** split = str_split(data[i], '|');
-    //        qDebug() << "string 1: "<< split[0] <<endl;
-    //        qDebug() << "string 2: "<< split[1] <<endl;
-    //        qDebug() <<endl << endl;
-
-    //        QString s = str_replace(data[i], "field1", "--");
-    //        qDebug() << "string: "<< s <<endl;
-
-    //        printf("%d record:  %s\n", i,data[i]);
-
     return a.exec();
+}
+
+void sortByTypeLength(struct record *records, unsigned short size){
+    unsigned short i, j;
+    for(i = 0; i < size - 1; i++){
+        for(j = 0; j < size - i - 1; j++){
+            struct record tempRecord;
+            if (records[j].data_type > records[j+1].data_type) //Increasing order
+            {
+                tempRecord = records[j];
+                records[j]   = records[j+1];
+                records[j+1] = tempRecord;
+            }
+        }
+    }
+}
+
+void sortByIntegerLength(struct record *records, unsigned short size){
+    unsigned short i, j;
+    for(i = 0; i < size - 1; i++){
+        for(j = 0; j < size - i - 1; j++){
+            struct record tempRecord;
+            if (records[j].integer_length > records[j+1].integer_length) //Increasing order
+            {
+                tempRecord = records[j];
+                records[j]   = records[j+1];
+                records[j+1] = tempRecord;
+            }
+        }
+    }
+}
+
+void sortByFloatingLength(struct record *records, unsigned short size){
+    unsigned short i, j;
+    for(i = 0; i < size - 1; i++){
+        for(j = 0; j < size - i - 1; j++){
+            struct record tempRecord;
+            if (records[j].decimal_length > records[j+1].decimal_length) //Increasing order
+            {
+                tempRecord = records[j];
+                records[j]   = records[j+1];
+                records[j+1] = tempRecord;
+            }
+        }
+    }
 }
 
 unsigned int getIntLength(char *str_original){
@@ -226,13 +262,13 @@ unsigned int getStringLength(char *str_original){
 
 void printRecord(struct record record){
     printf("\nRecord\n");
-    printf("id: %d\n", record.id);
-    printf("id: %s\n", (record.data_type==NUMERIC)?
+    printf("id             : %d\n", record.id);
+    printf("data_type      : %s\n", (record.data_type==NUMERIC)?
                "NUMERIC":(record.data_type==DECIMAL)?
                    "DECIMAL":(record.data_type==ALPHA_NUMERIC)?
                        "ALPHA_NUMERIC": "unknow");
-    printf("id: %d\n", record.integer_length);
-    printf("id: %d\n\n", record.decimal_length);
+    printf("integer_length : %d\n", record.integer_length);
+    printf("decimal_length : %d\n\n", record.decimal_length);
 }
 
 char *str_replace(char *orig, char *rep, char *with, unsigned int *count_matches) {
